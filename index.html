@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCSE Geography: Stacks & Stumps Formation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .formation-stage {
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    .stage-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stage-visible {
+      opacity: 1;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .animate-wave {
+      animation: wave 4s ease-in-out infinite;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="p-0 m-0">
+
+  <div class="min-h-screen flex flex-col items-center">
+    <!-- Header -->
+    <header class="w-full bg-white border-b border-slate-200 py-6 mb-8 shadow-sm">
+      <div class="max-w-4xl mx-auto px-6">
+        <h1 class="text-3xl font-bold text-slate-900">Coastal Erosion Model</h1>
+        <p class="text-slate-500 mt-1">Formation of Cracks, Caves, Arches, Stacks, and Stumps</p>
+      </div>
+    </header>
+
+    <main class="max-w-4xl w-full px-6 space-y-8">
+      
+      <!-- Interactive Diagram Container -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- SVG Diagram -->
+        <div class="aspect-video bg-[#e0f2fe] relative overflow-hidden border-b border-slate-100">
+          <svg id="erosion-svg" viewBox="0 0 800 450" class="w-full h-full">
+            <!-- Background -->
+            <rect width="800" height="450" fill="#f0f9ff" />
+            <rect y="300" width="800" height="150" fill="#0369a1" />
+            
+            <!-- Headland -->
+            <path d="M 0 450 L 0 80 Q 150 60 250 80 T 400 80 L 400 450 Z" fill="#64748b" />
+            
+            <!-- Stage 1: Crack -->
+            <g id="svg-stage-1" class="formation-stage">
+              <path d="M 400 200 L 400 350" stroke="#0f172a" stroke-width="4" stroke-dasharray="12 6" />
+              <text x="340" y="190" class="text-[14px] font-bold fill-slate-800 italic">1. Crack / Joint</text>
+            </g>
+
+            <!-- Stage 2: Cave -->
+            <g id="svg-stage-2" class="formation-stage stage-hidden">
+              <path d="M 400 250 Q 320 300 400 350 Z" fill="#1e293b" />
+              <text x="340" y="240" class="text-[14px] font-bold fill-slate-800 italic">2. Cave</text>
+            </g>
+
+            <!-- Stage 3: Arch -->
+            <g id="svg-stage-3" class="formation-stage stage-hidden">
+              <path d="M 320 450 L 320 320 Q 360 280 400 320 L 400 450 Z" fill="#0369a1" />
+              <text x="300" y="270" class="text-[14px] font-bold fill-slate-800 italic">3. Arch</text>
+            </g>
+
+            <!-- Stage 4: Stack -->
+            <g id="svg-stage-4" class="formation-stage stage-hidden">
+              <rect x="320" y="50" width="80" height="280" fill="#f0f9ff" />
+              <path d="M 450 100 L 530 100 L 530 450 L 450 450 Z" fill="#64748b" />
+              <text x="450" y="90" class="text-[14px] font-bold fill-slate-800 italic">4. Stack</text>
+            </g>
+
+            <!-- Stage 5: Stump -->
+            <g id="svg-stage-5" class="formation-stage stage-hidden">
+              <rect x="450" y="100" width="80" height="300" fill="#f0f9ff" />
+              <rect x="460" y="380" width="60" height="70" fill="#64748b" />
+              <rect x="450" y="300" width="80" height="100" fill="#0369a1" opacity="0.4" />
+              <text x="465" y="360" class="text-[14px] font-bold fill-blue-900 italic">5. Stump</text>
+            </g>
+
+            <!-- Water Animation -->
+            <path d="M 0 320 Q 100 300 200 320 T 400 320 T 600 320 T 800 320 L 800 450 L 0 450 Z" fill="#0ea5e9" opacity="0.5" class="animate-wave" />
+          </svg>
+        </div>
+
+        <!-- Controls and Text -->
+        <div class="p-8">
+          <div class="flex justify-between items-center mb-6">
+            <span id="stage-count" class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-bold">Stage 1 of 5</span>
+            <div class="flex gap-2" id="step-dots"></div>
+          </div>
+
+          <div class="min-h-[120px]">
+            <h2 id="stage-title" class="text-2xl font-bold text-slate-800 mb-2">The Weakness</h2>
+            <p id="stage-desc" class="text-slate-600 leading-relaxed text-lg">Erosion starts at a crack or joint in a headland of resistant rock (like limestone or chalk). This weakness is exploited by marine processes.</p>
+          </div>
+
+          <div class="mt-10 flex gap-4">
+            <button id="prev-btn" class="flex-1 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-50 disabled:opacity-30 transition-all">
+              Previous Step
+            </button>
+            <button id="next-btn" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">
+              Next Step
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Reference -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+        <div class="p-4 bg-white border border-slate-200 rounded-xl">
+          <h3 class="font-bold text-slate-800 mb-1">Hydraulic Action</h3>
+          <p class="text-slate-500">Air trapped in cracks by waves explodes outwards, breaking rock.</p>
+        </div>
+        <div class="p-4 bg-white border border-slate-200 rounded-xl">
+          <h3 class="font-bold text-slate-800 mb-1">Abrasion</h3>
+          <p class="text-slate-500">Waves fling sand and pebbles against the cliff base like sandpaper.</p>
+        </div>
+        <div class="p-4 bg-white border border-slate-200 rounded-xl">
+          <h3 class="font-bold text-slate-800 mb-1">Freeze-Thaw</h3>
+          <p class="text-slate-500">Water freezes in cracks, expands, and shatters rock from within.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-auto py-12 text-slate-400 text-xs">
+      GCSE Geography Specification • Coastal Landscapes
+    </footer>
+  </div>
+
+  <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
